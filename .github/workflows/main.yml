@@ -25,12 +25,19 @@ jobs:
         
     - name: Clean up workspace
       run: |
-        rm -rf ~/android/lineage/.repo
+        rm -rf ~/android/lineage
         mkdir -p ~/android/lineage
 
     - name: Clone LineageOS 21 Source
       run: |
-        git clone --depth=1 https://${{ secrets.GH_TOKEN }}@github.com/LineageOS/android.git -b lineage-21.0 ~/android/lineage
+        git clone --depth=1 https://github.com/LineageOS/android.git ~/android/lineage -b lineage-21.0
+
+    - name: Sync Device Repositories
+      run: |
+        cd ~/android/lineage
+        export PATH=$PATH:~/bin  # Ensure repo is in PATH
+        repo init -u https://github.com/LineageOS/android.git -b lineage-21.0
+        repo sync -c --force-sync --no-tags --no-clone-bundle -j$(nproc)
 
     - name: Clone Device Repositories
       run: |
@@ -42,6 +49,7 @@ jobs:
     - name: Build ROM
       run: |
         cd ~/android/lineage
+        export PATH=$PATH:~/bin  # Ensure repo is in PATH
         source build/envsetup.sh
         lunch lineage_a22x-userdebug
         make -j$(nproc --all) bacon
