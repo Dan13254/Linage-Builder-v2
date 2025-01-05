@@ -1,4 +1,4 @@
-name: Build LineageOS
+name: Build LineageOS 21
 
 on:
   push:
@@ -30,9 +30,9 @@ jobs:
 
     - name: Clone LineageOS 21 Source
       run: |
-        git clone --depth=1 https://github.com/LineageOS/android.git -b lineage-21.0 ~/android/lineage
+        git clone --depth=1 https://${{ secrets.GH_TOKEN }}@github.com/LineageOS/android.git -b lineage-21.0 ~/android/lineage
 
-     - name: Clone Device Repositories
+    - name: Clone Device Repositories
       run: |
         cd ~/android/lineage
         git clone --depth=1 https://${{ secrets.GH_TOKEN }}@github.com/Dan13254/android_device_samsung_a22x.git device/samsung/a22x
