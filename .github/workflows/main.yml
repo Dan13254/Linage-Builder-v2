@@ -22,6 +22,12 @@ jobs:
         echo 'export PATH=$PATH:~/bin' >> ~/.bashrc
         source ~/.bashrc
         echo "repo version"
+
+      - name: Clean up workspace
+      run: |
+        rm -rf ~/android/lineage/.repo
+        mkdir -p ~/android/lineage
+
         
     - name: Sync Source
       run: |
@@ -29,7 +35,7 @@ jobs:
         mkdir -p ~/android/lineage
         cd ~/android/lineage
         repo init -u https://github.com/LineageOS/android.git -b lineage-20.0
-        repo sync -c --force-sync --no-tags --no-clone-bundle -j$(nproc)
+        repo sync -c --force-sync --no-tags --no-clone-bundle --depth=1 -j$(nproc)
 
     - name: Clone Device Repositories
       run: |
