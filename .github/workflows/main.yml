@@ -28,25 +28,20 @@ jobs:
         rm -rf ~/android/lineage/.repo
         mkdir -p ~/android/lineage
 
-    - name: Sync Source
+    - name: Clone LineageOS 21 Source
       run: |
-        export PATH=$PATH:~/bin  # Ensure repo is in PATH
-        mkdir -p ~/android/lineage
-        cd ~/android/lineage
-        repo init -u https://github.com/LineageOS/android.git -b lineage-20.0
-        repo sync -c --force-sync --no-tags --no-clone-bundle --depth=1 -j$(nproc)
+        git clone --depth=1 https://github.com/LineageOS/android.git -b lineage-21.0 ~/android/lineage
 
     - name: Clone Device Repositories
       run: |
         cd ~/android/lineage
-        git clone https://github.com/Dan13254/android_device_samsung_a22x.git device/samsung/a22x
-        git clone https://github.com/Dan13254/android_vendor_samsung_a22x.git vendor/samsung/a22x
-        git clone https://github.com/Dan13254/android_kernel_samsung_a22x.git kernel/samsung/a22x
+        git clone --depth=1 https://github.com/Dan13254/android_device_samsung_a22x.git device/samsung/a22x
+        git clone --depth=1 https://github.com/Dan13254/android_vendor_samsung_a22x.git vendor/samsung/a22x
+        git clone --depth=1 https://github.com/Dan13254/android_kernel_samsung_a22x.git kernel/samsung/a22x
 
     - name: Build ROM
       run: |
         cd ~/android/lineage
-        export PATH=$PATH:~/bin  # Ensure repo is in PATH
         source build/envsetup.sh
         lunch lineage_a22x-userdebug
         make -j$(nproc --all) bacon
