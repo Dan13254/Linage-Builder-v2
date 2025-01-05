@@ -32,12 +32,12 @@ jobs:
       run: |
         git clone --depth=1 https://github.com/LineageOS/android.git -b lineage-21.0 ~/android/lineage
 
-    - name: Clone Device Repositories
+     - name: Clone Device Repositories
       run: |
         cd ~/android/lineage
-        git clone --depth=1 https://github.com/Dan13254/android_device_samsung_a22x.git device/samsung/a22x
-        git clone --depth=1 https://github.com/Dan13254/android_vendor_samsung_a22x.git vendor/samsung/a22x
-        git clone --depth=1 https://github.com/Dan13254/android_kernel_samsung_a22x.git kernel/samsung/a22x
+        git clone --depth=1 https://${{ secrets.GH_TOKEN }}@github.com/Dan13254/android_device_samsung_a22x.git device/samsung/a22x
+        git clone --depth=1 https://${{ secrets.GH_TOKEN }}@github.com/Dan13254/android_vendor_samsung_a22x.git vendor/samsung/a22x
+        git clone --depth=1 https://${{ secrets.GH_TOKEN }}@github.com/Dan13254/android_kernel_samsung_a22x.git kernel/samsung/a22x
 
     - name: Build ROM
       run: |
