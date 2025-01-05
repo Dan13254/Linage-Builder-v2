@@ -1,0 +1,45 @@
+name: Build LineageOS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Set up environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install openjdk-11-jdk git-core gnupg flex bison gperf build-essential \
+          zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev \
+          libx11-dev lib32z1-dev libgl1-mesa-dev libxml2-utils xsltproc unzip fontconfig python-is-python3
+        
+    - name: Sync Source
+      run: |
+        mkdir -p ~/android/lineage
+        cd ~/android/lineage
+        repo init -u https://github.com/LineageOS/android.git -b lineage-20.0
+        repo sync -c --force-sync --no-tags --no-clone-bundle -j8
+
+    - name: Clone Device Repositories
+      run: |
+        cd ~/android/lineage
+        git clone https://github.com/Dan13254/android_kernel_samsung_a226b.git device/samsung/a22x
+        git clone https://github.com/Dan13254/android_vendor_samsung_a22x.git  vendor/samsung/a22x
+        git clone https://github.com/Dan13254/android_kernel_samsung_a226b.git kernel/samsung/a22x
+
+    - name: Build ROM
+      run: |
+        cd ~/android/lineage
+        source build/envsetup.sh
+        lunch lineage_devicecodename-userdebug
+        make -j$(nproc --all) bacon
+
+    - name: Upload Build
+      uses: actions/upload-artifact@v3
+      with:
+        name: lineageos
+        path: ~/android/lineage/out/target/product/devicecodename/*.zip
